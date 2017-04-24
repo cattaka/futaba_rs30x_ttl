@@ -13,62 +13,69 @@ class FutabaRs30xTtl {
 
     uint8_t mReadState;
     uint8_t mReadId;
+    uint8_t mReadFlag;
     uint8_t mReadAddress;
     uint8_t mReadLength;
     uint8_t mReadCount;
+    uint8_t mReadDataCount;
     uint8_t* mReturnPacketBuf;
+    int mWaitTimeout;
+
+    bool waitAvailable(int timeout);
 
   public:
-    FutabaRs30xTtl(Stream& stream, uint8_t pinNoRwSwitch, uint8_t maximumServoId = 24, uint8_t returnPacketBufSize = 0x40);
+    FutabaRs30xTtl(Stream& stream, uint8_t pinNoRwSwitch, uint8_t maximumServoId = 24, uint8_t returnPacketBufSize = 0x40, int waitTimeout = 100);
     virtual ~FutabaRs30xTtl();
     void setup(uint8_t id, bool readAllMemoryMap);
-  
+
     // general-purpose methods
     void feedSerial();
-    void readMemoryMap(uint8_t id, uint16_t address, uint8_t len);
-    void writeMemoryMap(uint8_t id, bool flashRom, uint16_t address, uint8_t len, uint8_t* data);
-    
-    // getter-setter methods
-    uint8_t getServoId(bool requestPacket);
-    void setServoId(bool requestPacket, uint8_t value, bool flashRom = false);
-    bool getReverse(bool requestPacket);
-    void setReverse(bool requestPacket, bool value, bool flashRom = false);
-    uint8_t getBaudRate(bool requestPacket);
-    void setBaudRate(bool requestPacket, uint8_t value, bool flashRom = false);
-    uint8_t getReturnDelay(bool requestPacket);
-    void setReturnDelay(bool requestPacket, uint8_t value, bool flashRom = false);
-    uint16_t getCwAngleLimit(bool requestPacket);
-    void setCwAngleLimit(bool requestPacket, uint16_t value, bool flashRom = false);
-    uint16_t getCcwAngleLimit(bool requestPacket);
-    void setCcwAngleLimit(bool requestPacket, uint16_t value, bool flashRom = false);
-    uint16_t getTemperatureLimit(bool requestPacket);
-    uint8_t getTorqueInSilence(bool requestPacket);
-    void setTorqueInSilence(bool requestPacket, uint8_t value, bool flashRom = false);
-    uint8_t getWarmupTime(bool requestPacket);
-    void setWarmupTime(bool requestPacket, uint8_t value, bool flashRom = false);
-    uint8_t getCwComplianceMargin(bool requestPacket);
-    void setCwComplianceMargin(bool requestPacket, uint8_t value, bool flashRom = false);
-    uint8_t getCcwComplianceMargin(bool requestPacket);
-    void setCcwComplianceMargin(bool requestPacket, uint8_t value, bool flashRom = false);
-    uint8_t getCwComplianceSlope(bool requestPacket);
-    void setCwComplianceSlope(bool requestPacket, uint8_t value, bool flashRom = false);
-    uint8_t getCcwComplianceSlope(bool requestPacket);
-    void setCcwComplianceSlope(bool requestPacket, uint8_t value, bool flashRom = false);
-    uint8_t getPunch(bool requestPacket); void setPunch(bool requestPacket, uint8_t value, bool flashRom = false);
-    uint16_t getGoalPosition(bool requestPacket);
-    void setGoalPosition(bool requestPacket, uint16_t value, bool flashRom = false);
-    uint16_t getGoalTime(bool requestPacket);
-    void setGoalTime(bool requestPacket, uint16_t value, bool flashRom = false);
-    uint8_t getMaxTorque(bool requestPacket);
-    void setMaxTorque(bool requestPacket, uint8_t value, bool flashRom = false);
-    uint8_t getTorqueEnable(bool requestPacket);
-    void setTorqueEnable(bool requestPacket, uint8_t value, bool flashRom = false);
-    uint16_t getPresentPosion(bool requestPacket);
-    uint16_t getPresentTime(bool requestPacket);
-    uint16_t getPresentSpeed(bool requestPacket);
-    uint16_t getPresentCurrent(bool requestPacket);
-    uint16_t getPresentTemperature(bool requestPacket);
-    uint16_t getPresentVolts(bool requestPacket);
+    void writeMemoryMap(uint8_t id, uint8_t flag, uint8_t address, uint8_t len, uint8_t* data);
+    void readMemoryMap(uint8_t id, uint8_t address, uint8_t len);
+
+    // getter methods
+    uint8_t getServoId(uint8_t id);
+    uint8_t getReverse(uint8_t id);
+    uint8_t getBaudRate(uint8_t id);
+    uint8_t getReturnDelay(uint8_t id);
+    uint16_t getCwAngleLimit(uint8_t id);
+    uint16_t getCcwAngleLimit(uint8_t id);
+    uint16_t getTemperatureLimit(uint8_t id);
+    uint8_t getTorqueInSilence(uint8_t id);
+    uint8_t getWarmupTime(uint8_t id);
+    uint8_t getCwComplianceMargin(uint8_t id);
+    uint8_t getCcwComplianceMargin(uint8_t id);
+    uint8_t getCwComplianceSlope(uint8_t id);
+    uint8_t getCcwComplianceSlope(uint8_t id);
+    uint8_t getPunch(uint8_t id);
+    uint16_t getGoalPosition(uint8_t id);
+    uint16_t getGoalTime(uint8_t id);
+    uint8_t getMaxTorque(uint8_t id);
+    uint8_t getTorqueEnable(uint8_t id);
+    uint16_t getPresentPosion(uint8_t id);
+    uint16_t getPresentTime(uint8_t id);
+    uint16_t getPresentSpeed(uint8_t id);
+    uint16_t getPresentCurrent(uint8_t id);
+    uint16_t getPresentTemperature(uint8_t id);
+    uint16_t getPresentVolts(uint8_t id);
+
+    void setServoId(uint8_t id, uint8_t value, bool flashRom = false);
+    void setReverse(uint8_t id, uint8_t value, bool flashRom = false);
+    void setBaudRate(uint8_t id, uint8_t value, bool flashRom = false);
+    void setReturnDelay(uint8_t id, uint8_t value, bool flashRom = false);
+    void setCwAngleLimit(uint8_t id, uint16_t value, bool flashRom = false);
+    void setCcwAngleLimit(uint8_t id, uint16_t value, bool flashRom = false);
+    void setTorqueInSilence(uint8_t id, uint8_t value, bool flashRom = false);
+    void setWarmupTime(uint8_t id, uint8_t value, bool flashRom = false);
+    void setCwComplianceMargin(uint8_t id, uint8_t value, bool flashRom = false);
+    void setCcwComplianceMargin(uint8_t id, uint8_t value, bool flashRom = false);
+    void setCwComplianceSlope(uint8_t id, uint8_t value, bool flashRom = false);
+    void setCcwComplianceSlope(uint8_t id, uint8_t value, bool flashRom = false);
+    void setPunch(uint8_t id, uint8_t value, bool flashRom = false);
+    void setGoalPosition(uint8_t id, uint16_t value, bool flashRom = false);
+    void setGoalTime(uint8_t id, uint16_t value, bool flashRom = false);
+    void setMaxTorque(uint8_t id, uint8_t value, bool flashRom = false);
+    void setTorqueEnable(uint8_t id, uint8_t value, bool flashRom = false);
 };
 
 #endif // FUTABA_RS30X_TTL_H

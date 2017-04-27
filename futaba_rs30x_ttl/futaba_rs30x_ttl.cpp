@@ -74,8 +74,9 @@ bool FutabaRs30xTtl::waitAvailable(int timeout) {
 }
 
 void FutabaRs30xTtl::feedSerial() {
-  while (mStream->available() > 0) {
+  while (waitAvailable(mWaitTimeout)) {
     uint8_t ch = mStream->read();
+
     switch (mReadState) {
       case RS_UNKNOWN: {
           if (ch == 0xFD) {
@@ -148,7 +149,6 @@ void FutabaRs30xTtl::feedSerial() {
             Serial.println(mReadDataCount, HEX);
             Serial.println(ch, HEX);
             Serial.println(sum, HEX);
-            Serial.println(calcSum(mReturnPacketBuf, mReadDataCount), HEX);
             Serial.println("error.end");
 #endif
           }
@@ -165,13 +165,14 @@ void FutabaRs30xTtl::writeMemoryMap(uint8_t id, uint8_t flag, uint8_t address, u
   if (cnt && len > 0) {
     sum = sum ^ calcSum(data, len);
   }
-#ifdef FUTABA_RS30X_TTL_DEBUG
+#ifdef FUTABA_RS30X_TTL_DEBUG}
   Serial.println(id, HEX);
   Serial.println(flag, HEX);
   Serial.println(address, HEX);
   Serial.println(len, HEX);
   Serial.println(cnt, HEX);
   Serial.println(sum, HEX);
+  Serial.println("Sent");
   Serial.flush();
 #endif
 
@@ -187,10 +188,10 @@ void FutabaRs30xTtl::writeMemoryMap(uint8_t id, uint8_t flag, uint8_t address, u
     mStream->write(data, len);
   }
   mStream->write(sum);
+  mStream->flush();
   digitalWrite(mPinNoRwSwitch, LOW);
 
   if (flag != 0) {
-    waitAvailable(mWaitTimeout);
     feedSerial();
   }
 }
